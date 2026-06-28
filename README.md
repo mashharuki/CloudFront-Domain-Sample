@@ -1,0 +1,2 @@
+# CloudFront-Domain-Sample
+CloudFrontとカスタムドメインの使い方を学ぶためのサンプルリポジトリです。
