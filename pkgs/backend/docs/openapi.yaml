@@ -1,0 +1,529 @@
+openapi: 3.0.3
+
+info:
+  title: Todo API
+  description: |
+    Todoアプリケーション用のバックエンドAPI仕様です。
+    AWS API Gateway + Lambda + DynamoDB を想定しています。
+  version: 1.0.0
+
+servers:
+  - url: https://api.example.com/v1
+    description: Production
+  - url: http://localhost:3000/v1
+    description: Local development
+
+tags:
+  - name: Todos
+    description: Todoの作成・取得・更新・削除
+
+paths:
+  /todos:
+    get:
+      tags:
+        - Todos
+      summary: Todo一覧取得
+      description: |
+        登録されているTodoの一覧を取得します。
+        DynamoDBのScanまたはQueryを想定し、ページネーションに対応しています。
+      operationId: listTodos
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          description: 取得件数の上限
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: nextToken
+          in: query
+          required: false
+          description: 次ページ取得用トークン
+          schema:
+            type: string
+        - name: status
+          in: query
+          required: false
+          description: Todoのステータスで絞り込み
+          schema:
+            $ref: "#/components/schemas/TodoStatus"
+      responses:
+        "200":
+          description: Todo一覧の取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListTodosResponse"
+              examples:
+                success:
+                  value:
+                    items:
+                      - id: "todo_01HZY9J7YF6YB8E8X4A3M2N1Q9"
+                        title: "OpenAPI仕様を作成する"
+                        description: "Todo APIのOpenAPI YAMLを作成する"
+                        status: "todo"
+                        dueDate: "2026-07-01"
+                        version: 1
+                        createdAt: "2026-06-28T10:00:00Z"
+                        updatedAt: "2026-06-28T10:00:00Z"
+                    nextToken: "eyJpZCI6InRvZG9fMDEifQ=="
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    post:
+      tags:
+        - Todos
+      summary: Todo新規登録
+      description: |
+        新しいTodoを登録します。
+        RESTの一般的な設計に合わせて、作成処理は POST /todos で行います。
+        IDはサーバー側で生成する想定です。
+      operationId: createTodo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTodoRequest"
+            examples:
+              createTodo:
+                value:
+                  title: "DynamoDBテーブルを作成する"
+                  description: "Todo保存用のDynamoDBテーブルを作成する"
+                  status: "todo"
+                  dueDate: "2026-07-05"
+      responses:
+        "201":
+          description: Todoの登録に成功
+          headers:
+            Location:
+              description: 作成されたTodoのURL
+              schema:
+                type: string
+                example: "/v1/todos/todo_01HZY9J7YF6YB8E8X4A3M2N1Q9"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TodoResponse"
+              examples:
+                success:
+                  value:
+                    item:
+                      id: "todo_01HZY9J7YF6YB8E8X4A3M2N1Q9"
+                      title: "DynamoDBテーブルを作成する"
+                      description: "Todo保存用のDynamoDBテーブルを作成する"
+                      status: "todo"
+                      dueDate: "2026-07-05"
+                      version: 1
+                      createdAt: "2026-06-28T10:00:00Z"
+                      updatedAt: "2026-06-28T10:00:00Z"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /todos/{todoId}:
+    get:
+      tags:
+        - Todos
+      summary: Todo詳細取得
+      description: IDを指定して特定のTodoの情報を取得します。
+      operationId: getTodoById
+      parameters:
+        - $ref: "#/components/parameters/TodoIdPathParam"
+      responses:
+        "200":
+          description: Todo詳細の取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TodoResponse"
+              examples:
+                success:
+                  value:
+                    item:
+                      id: "todo_01HZY9J7YF6YB8E8X4A3M2N1Q9"
+                      title: "OpenAPI仕様を作成する"
+                      description: "Todo APIのOpenAPI YAMLを作成する"
+                      status: "todo"
+                      dueDate: "2026-07-01"
+                      version: 1
+                      createdAt: "2026-06-28T10:00:00Z"
+                      updatedAt: "2026-06-28T10:00:00Z"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    put:
+      tags:
+        - Todos
+      summary: Todo全体更新
+      description: |
+        IDを指定して特定のTodoを全体更新します。
+        PUTはリソース全体の置き換えとして扱います。
+        title、statusなどの主要項目をすべて指定してください。
+      operationId: replaceTodoById
+      parameters:
+        - $ref: "#/components/parameters/TodoIdPathParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReplaceTodoRequest"
+            examples:
+              replaceTodo:
+                value:
+                  title: "OpenAPI仕様を完成させる"
+                  description: "Todo APIの仕様をREST設計に合わせて修正する"
+                  status: "in_progress"
+                  dueDate: "2026-07-10"
+                  version: 1
+      responses:
+        "200":
+          description: Todoの全体更新に成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TodoResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    patch:
+      tags:
+        - Todos
+      summary: Todo部分更新
+      description: |
+        IDを指定して特定のTodoを部分更新します。
+        PATCHは変更したい項目のみ指定できます。
+      operationId: updateTodoById
+      parameters:
+        - $ref: "#/components/parameters/TodoIdPathParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTodoRequest"
+            examples:
+              updateTodo:
+                value:
+                  status: "done"
+                  version: 2
+      responses:
+        "200":
+          description: Todoの部分更新に成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TodoResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    delete:
+      tags:
+        - Todos
+      summary: Todo削除
+      description: IDを指定して特定のTodoを削除します。
+      operationId: deleteTodoById
+      parameters:
+        - $ref: "#/components/parameters/TodoIdPathParam"
+      responses:
+        "204":
+          description: Todoの削除に成功
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+components:
+  parameters:
+    TodoIdPathParam:
+      name: todoId
+      in: path
+      required: true
+      description: Todoの一意なID
+      schema:
+        type: string
+        example: "todo_01HZY9J7YF6YB8E8X4A3M2N1Q9"
+
+  schemas:
+    Todo:
+      type: object
+      required:
+        - id
+        - title
+        - status
+        - version
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          description: Todoの一意なID。DynamoDBのパーティションキーとして利用する想定。
+          example: "todo_01HZY9J7YF6YB8E8X4A3M2N1Q9"
+        title:
+          type: string
+          description: Todoのタイトル
+          minLength: 1
+          maxLength: 100
+          example: "OpenAPI仕様を作成する"
+        description:
+          type: string
+          nullable: true
+          description: Todoの詳細説明
+          maxLength: 1000
+          example: "Todo APIのOpenAPI YAMLを作成する"
+        status:
+          $ref: "#/components/schemas/TodoStatus"
+        dueDate:
+          type: string
+          format: date
+          nullable: true
+          description: Todoの期限日
+          example: "2026-07-01"
+        version:
+          type: integer
+          description: |
+            楽観的ロック用のバージョン番号。
+            DynamoDBのConditionExpressionで競合検知に利用できます。
+          minimum: 1
+          example: 1
+        createdAt:
+          type: string
+          format: date-time
+          description: 作成日時
+          example: "2026-06-28T10:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: 更新日時
+          example: "2026-06-28T10:00:00Z"
+
+    TodoStatus:
+      type: string
+      description: Todoの状態
+      enum:
+        - todo
+        - in_progress
+        - done
+      example: "todo"
+
+    CreateTodoRequest:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          description: Todoのタイトル
+          minLength: 1
+          maxLength: 100
+          example: "DynamoDBテーブルを作成する"
+        description:
+          type: string
+          nullable: true
+          description: Todoの詳細説明
+          maxLength: 1000
+          example: "Todo保存用のDynamoDBテーブルを作成する"
+        status:
+          allOf:
+            - $ref: "#/components/schemas/TodoStatus"
+          description: |
+            Todoの状態。
+            未指定の場合、サーバー側で todo を設定する想定です。
+        dueDate:
+          type: string
+          format: date
+          nullable: true
+          description: Todoの期限日
+          example: "2026-07-05"
+
+    ReplaceTodoRequest:
+      type: object
+      required:
+        - title
+        - status
+        - version
+      properties:
+        title:
+          type: string
+          description: Todoのタイトル
+          minLength: 1
+          maxLength: 100
+          example: "OpenAPI仕様を完成させる"
+        description:
+          type: string
+          nullable: true
+          description: Todoの詳細説明
+          maxLength: 1000
+          example: "Todo APIの仕様をREST設計に合わせて修正する"
+        status:
+          $ref: "#/components/schemas/TodoStatus"
+        dueDate:
+          type: string
+          format: date
+          nullable: true
+          description: Todoの期限日
+          example: "2026-07-10"
+        version:
+          type: integer
+          description: 更新対象Todoの現在のバージョン番号
+          minimum: 1
+          example: 1
+
+    UpdateTodoRequest:
+      type: object
+      description: |
+        Todo部分更新リクエスト。
+        変更したい項目のみ指定できます。
+        versionを指定することで楽観的ロックによる競合検知ができます。
+      properties:
+        title:
+          type: string
+          description: Todoのタイトル
+          minLength: 1
+          maxLength: 100
+          example: "OpenAPI仕様を修正する"
+        description:
+          type: string
+          nullable: true
+          description: Todoの詳細説明
+          maxLength: 1000
+          example: "OpenAPI YAMLのレスポンス定義を修正する"
+        status:
+          $ref: "#/components/schemas/TodoStatus"
+        dueDate:
+          type: string
+          format: date
+          nullable: true
+          description: Todoの期限日
+          example: "2026-07-10"
+        version:
+          type: integer
+          description: 更新対象Todoの現在のバージョン番号
+          minimum: 1
+          example: 1
+      minProperties: 1
+
+    TodoResponse:
+      type: object
+      required:
+        - item
+      properties:
+        item:
+          $ref: "#/components/schemas/Todo"
+
+    ListTodosResponse:
+      type: object
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          description: Todo一覧
+          items:
+            $ref: "#/components/schemas/Todo"
+        nextToken:
+          type: string
+          nullable: true
+          description: 次ページ取得用トークン。次ページがない場合はnull。
+          example: "eyJpZCI6InRvZG9fMDEifQ=="
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: string
+              description: エラーコード
+              example: "VALIDATION_ERROR"
+            message:
+              type: string
+              description: エラーメッセージ
+              example: "Request validation failed."
+            details:
+              type: array
+              description: エラー詳細
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                    example: "title"
+                  reason:
+                    type: string
+                    example: "title is required"
+
+  responses:
+    BadRequest:
+      description: リクエストが不正
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              code: "BAD_REQUEST"
+              message: "Invalid request parameters."
+
+    NotFound:
+      description: 指定されたTodoが存在しない
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              code: "TODO_NOT_FOUND"
+              message: "Todo not found."
+
+    Conflict:
+      description: リソースの競合が発生
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              code: "CONFLICT"
+              message: "Todo has already been updated by another request."
+
+    InternalServerError:
+      description: サーバー内部エラー
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              code: "INTERNAL_SERVER_ERROR"
+              message: "Unexpected server error."
