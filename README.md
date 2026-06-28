@@ -42,6 +42,17 @@ CloudFront とカスタムドメインの使い方を学ぶためのサンプル
    ```
 
 5. `DomainStack` の `NameServers` output を、お名前.com 側の `mashharuki.com` ネームサーバーに設定する
+
+以下の値でも取得できる
+
+```bash
+aws cloudformation describe-stacks \
+   --stack-name DomainStack \
+   --region us-east-1 \
+   --query "Stacks[0].Outputs[?OutputKey=='NameServers'].OutputValue" \
+   --output text
+```
+
 6. `dig NS mashharuki.com` で Route53 への委任を確認する
 7. フロントエンドをビルドする
 
@@ -61,6 +72,10 @@ CloudFront とカスタムドメインの使い方を学ぶためのサンプル
 - `https://www.mashharuki.com`
 
 `www` は CloudFront Function で apex ドメインへ 301 リダイレクトします。S3 バケットは非公開で、CloudFront Origin Access Control 経由のみアクセスできます。
+
+以下のようになればOK!
+
+![](./docs/0.png)
 
 ## トラブルシュート
 
