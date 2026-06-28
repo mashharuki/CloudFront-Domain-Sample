@@ -1,8 +1,8 @@
 import { Match, Template } from "aws-cdk-lib/assertions";
 import * as cdk from "aws-cdk-lib/core";
 import { DomainStack } from "../lib/domain-stack";
-import { DOMAIN_NAME, WWW_DOMAIN_NAME } from "../lib/site-config";
 import { StaticSiteStack } from "../lib/static-site-stack";
+import { DOMAIN_NAME, WWW_DOMAIN_NAME } from "../utils/site-config";
 
 const env = { account: "123456789012", region: "us-east-1" };
 

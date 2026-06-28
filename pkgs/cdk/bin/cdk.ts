@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import * as cdk from "aws-cdk-lib/core";
 import { DomainStack } from "../lib/domain-stack";
-import { CLOUD_FRONT_REGION } from "../lib/site-config";
 import { StaticSiteStack } from "../lib/static-site-stack";
+import { CLOUD_FRONT_REGION } from "../utils/site-config";
 
 const app = new cdk.App();
 const env = {

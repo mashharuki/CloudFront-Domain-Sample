@@ -1,7 +1,7 @@
 import * as route53 from "aws-cdk-lib/aws-route53";
 import * as cdk from "aws-cdk-lib/core";
 import type { Construct } from "constructs";
-import { DOMAIN_NAME } from "./site-config";
+import { DOMAIN_NAME } from "../utils/site-config";
 
 export class DomainStack extends cdk.Stack {
   public readonly hostedZone: route53.PublicHostedZone;

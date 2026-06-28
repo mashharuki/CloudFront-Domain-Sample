@@ -17,11 +17,43 @@ CloudFront とカスタムドメインの使い方を学ぶためのサンプル
 このサンプルは `mashharuki.com` と `www.mashharuki.com` を CloudFront に割り当て、正規 URL を `https://mashharuki.com` にします。
 
 1. `pnpm install`
-2. `pnpm cdk deploy DomainStack`
-3. `DomainStack` の `NameServers` output を、お名前.com 側の `mashharuki.com` ネームサーバーに設定する
-4. `dig NS mashharuki.com` で Route53 への委任を確認する
-5. `pnpm frontend build`
-6. `pnpm cdk deploy StaticSiteStack`
+2. AWS アカウントが正しいことを確認する
+
+   ```bash
+   aws sts get-caller-identity
+   ```
+
+3. 初回だけ CDK bootstrap を実行する
+
+   ```bash
+   pnpm cdk cdk bootstrap aws://796032104877/us-east-1
+   ```
+
+   AWS profile を使う場合:
+
+   ```bash
+   AWS_PROFILE=<your-profile> pnpm cdk cdk bootstrap aws://796032104877/us-east-1
+   ```
+
+4. Hosted Zone を作成する
+
+   ```bash
+   pnpm cdk run deploy DomainStack
+   ```
+
+5. `DomainStack` の `NameServers` output を、お名前.com 側の `mashharuki.com` ネームサーバーに設定する
+6. `dig NS mashharuki.com` で Route53 への委任を確認する
+7. フロントエンドをビルドする
+
+   ```bash
+   pnpm frontend build
+   ```
+
+8. 静的サイト配信リソースを作成する
+
+   ```bash
+   pnpm cdk run deploy StaticSiteStack
+   ```
 
 確認 URL:
 
@@ -29,3 +61,19 @@ CloudFront とカスタムドメインの使い方を学ぶためのサンプル
 - `https://www.mashharuki.com`
 
 `www` は CloudFront Function で apex ドメインへ 301 リダイレクトします。S3 バケットは非公開で、CloudFront Origin Access Control 経由のみアクセスできます。
+
+## トラブルシュート
+
+### `No bucket named 'cdk-hnb659fds-assets-...-us-east-1'`
+
+対象アカウントの `us-east-1` で CDK bootstrap が未実行です。CloudFront 用 ACM 証明書は `us-east-1` に必要なため、このサンプルの CDK スタックも `us-east-1` 固定です。
+
+```bash
+pnpm cdk cdk bootstrap aws://796032104877/us-east-1
+```
+
+bootstrap 後に再度デプロイしてください。
+
+```bash
+pnpm cdk deploy DomainStack
+```

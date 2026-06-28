@@ -1,0 +1,7 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CLOUD_FRONT_REGION = exports.WWW_DOMAIN_NAME = exports.DOMAIN_NAME = void 0;
+exports.DOMAIN_NAME = "mashharuki.com";
+exports.WWW_DOMAIN_NAME = `www.${exports.DOMAIN_NAME}`;
+exports.CLOUD_FRONT_REGION = "us-east-1";
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic2l0ZS1jb25maWcuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi91dGlscy9zaXRlLWNvbmZpZy50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7QUFBYSxRQUFBLFdBQVcsR0FBRyxnQkFBZ0IsQ0FBQztBQUMvQixRQUFBLGVBQWUsR0FBRyxPQUFPLG1CQUFXLEVBQUUsQ0FBQztBQUN2QyxRQUFBLGtCQUFrQixHQUFHLFdBQVcsQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCBjb25zdCBET01BSU5fTkFNRSA9IFwibWFzaGhhcnVraS5jb21cIjtcbmV4cG9ydCBjb25zdCBXV1dfRE9NQUlOX05BTUUgPSBgd3d3LiR7RE9NQUlOX05BTUV9YDtcbmV4cG9ydCBjb25zdCBDTE9VRF9GUk9OVF9SRUdJT04gPSBcInVzLWVhc3QtMVwiO1xuIl19

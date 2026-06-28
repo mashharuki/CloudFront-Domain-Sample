@@ -1,4 +1,3 @@
-import * as path from "node:path";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
 import * as origins from "aws-cdk-lib/aws-cloudfront-origins";
@@ -8,7 +7,8 @@ import * as s3 from "aws-cdk-lib/aws-s3";
 import * as s3deploy from "aws-cdk-lib/aws-s3-deployment";
 import * as cdk from "aws-cdk-lib/core";
 import type { Construct } from "constructs";
-import { DOMAIN_NAME, WWW_DOMAIN_NAME } from "./site-config";
+import * as path from "node:path";
+import { DOMAIN_NAME, WWW_DOMAIN_NAME } from "../utils/site-config";
 
 export interface StaticSiteStackProps extends cdk.StackProps {
   readonly hostedZone: route53.IHostedZone;
@@ -44,24 +44,12 @@ export class StaticSiteStack extends cdk.Stack {
       "RedirectWwwFunction",
       {
         runtime: cloudfront.FunctionRuntime.JS_2_0,
-        code: cloudfront.FunctionCode.fromInline(`
-function handler(event) {
-  var request = event.request;
-  var host = request.headers.host && request.headers.host.value;
-
-  if (host === "${WWW_DOMAIN_NAME}") {
-    return {
-      statusCode: 301,
-      statusDescription: "Moved Permanently",
-      headers: {
-        location: { value: "https://${DOMAIN_NAME}" + request.uri }
-      }
-    };
-  }
-
-  return request;
-}
-`),
+        code: cloudfront.FunctionCode.fromFile({
+          filePath: path.join(
+            __dirname,
+            "cloudfront-functions/redirect-www.js",
+          ),
+        }),
       },
     );
 
