@@ -12,5 +12,13 @@ function handler(event) {
     };
   }
 
+  const uri = request.uri;
+  const isApiPath = uri === "/v1" || uri.indexOf("/v1/") === 0;
+  const hasFileExtension = uri.split("/").pop().indexOf(".") !== -1;
+
+  if (!isApiPath && !hasFileExtension) {
+    request.uri = "/index.html";
+  }
+
   return request;
 }

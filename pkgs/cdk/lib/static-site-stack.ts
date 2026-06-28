@@ -1,3 +1,4 @@
+import * as path from "node:path";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
 import * as origins from "aws-cdk-lib/aws-cloudfront-origins";
@@ -7,11 +8,11 @@ import * as s3 from "aws-cdk-lib/aws-s3";
 import * as s3deploy from "aws-cdk-lib/aws-s3-deployment";
 import * as cdk from "aws-cdk-lib/core";
 import type { Construct } from "constructs";
-import * as path from "node:path";
 import { DOMAIN_NAME, WWW_DOMAIN_NAME } from "../utils/site-config";
 
 export interface StaticSiteStackProps extends cdk.StackProps {
   readonly hostedZone: route53.IHostedZone;
+  readonly apiEndpoint: string;
   readonly websiteDistPath?: string;
 }
 
@@ -39,18 +40,23 @@ export class StaticSiteStack extends cdk.Stack {
       validation: acm.CertificateValidation.fromDns(props.hostedZone),
     });
 
-    const redirectWwwFunction = new cloudfront.Function(
+    const viewerRequestFunction = new cloudfront.Function(
       this,
-      "RedirectWwwFunction",
+      "ViewerRequestFunction",
       {
         runtime: cloudfront.FunctionRuntime.JS_2_0,
         code: cloudfront.FunctionCode.fromFile({
           filePath: path.join(
             __dirname,
-            "cloudfront-functions/redirect-www.js",
+            "cloudfront-functions/viewer-request.js",
           ),
         }),
       },
+    );
+
+    const apiDomainName = cdk.Fn.select(
+      2,
+      cdk.Fn.split("/", props.apiEndpoint),
     );
 
     this.distribution = new cloudfront.Distribution(this, "Distribution", {
@@ -66,25 +72,30 @@ export class StaticSiteStack extends cdk.Stack {
         compress: true,
         functionAssociations: [
           {
-            function: redirectWwwFunction,
+            function: viewerRequestFunction,
             eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
           },
         ],
       },
-      errorResponses: [
-        {
-          httpStatus: 403,
-          responseHttpStatus: 200,
-          responsePagePath: "/index.html",
-          ttl: cdk.Duration.minutes(5),
+      additionalBehaviors: {
+        "v1/*": {
+          origin: new origins.HttpOrigin(apiDomainName, {
+            protocolPolicy: cloudfront.OriginProtocolPolicy.HTTPS_ONLY,
+          }),
+          viewerProtocolPolicy:
+            cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+          allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
+          cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
+          originRequestPolicy:
+            cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
+          functionAssociations: [
+            {
+              function: viewerRequestFunction,
+              eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
+            },
+          ],
         },
-        {
-          httpStatus: 404,
-          responseHttpStatus: 200,
-          responsePagePath: "/index.html",
-          ttl: cdk.Duration.minutes(5),
-        },
-      ],
+      },
     });
 
     new s3deploy.BucketDeployment(this, "DeployWebsite", {
