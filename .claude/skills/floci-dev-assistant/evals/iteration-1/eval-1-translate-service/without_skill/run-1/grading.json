@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "JSON 1.1 プロトコルを選択し、X-Amz-Target ヘッダーでルーティングすることを説明している",
+      "passed": true,
+      "evidence": "Content-Type: application/x-amz-json-1.1 と X-Amz-Target: AWSShineFrontendService_20170701.<Action> を説明している。"
+    },
+    {
+      "text": "TranslateJsonHandler クラスまたは相当するハンドラークラスのコードが含まれている",
+      "passed": true,
+      "evidence": "TranslateJsonHandler.java の完全なコードが含まれている。"
+    },
+    {
+      "text": "@ApplicationScoped アノテーションのついた TranslateService クラスが含まれている",
+      "passed": true,
+      "evidence": "@ApplicationScoped の TranslateService.java が含まれている。"
+    },
+    {
+      "text": "StorageFactory を使用してストレージを初期化している（InMemoryStorage の直接インスタンス化はしない）",
+      "passed": false,
+      "evidence": "スキルなしの回答ではストレージの扱いについて明示的な説明がなく、TranslateService.java に StorageFactory への言及がない。ただし Translate がステートレスなので不要とも言える。スキルが提供するような「なぜ不要か」の説明もない。"
+    },
+    {
+      "text": "AwsException を使ったエラーハンドリングが含まれている",
+      "passed": true,
+      "evidence": "TranslateService.java で AwsException を使ったバリデーションが含まれている。"
+    },
+    {
+      "text": "ServiceDescriptor の登録コードまたはその説明が含まれている",
+      "passed": true,
+      "evidence": "ResolvedServiceCatalog への登録と AwsJson11Controller へのルーティング変更について言及している。ただし with_skill 版より具体性が低い。"
+    }
+  ],
+  "summary": {
+    "pass_rate": 0.8333,
+    "passed": 5,
+    "failed": 1,
+    "total": 6
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "eval_id": 2,
+  "eval_name": "test-writing",
+  "prompt": "Floci の SSM サービスに対してインテグレーションテストを書きたいです。次の3つのシナリオをカバーするテストクラスを作成してください：\n1. パラメーターの作成（PutParameter）\n2. 存在しないパラメーターの取得でエラーが返ること（GetParameter でエラー）\n3. パラメーターの一覧取得（DescribeParameters）\n\nFloci の既存のテストパターンに沿ったコードを生成してください。",
+  "assertions": [
+    "@QuarkusTest アノテーションが付いたテストクラスが生成されている",
+    "X-Amz-Target ヘッダーを使った RestAssured の HTTP リクエストが含まれている",
+    "Content-Type として application/x-amz-json-1.1 が使われている",
+    "エラーケースのテストで .body(\"__type\", equalTo(...)) による検証がある",
+    "DescribeParameters のレスポンス検証が含まれている",
+    "RestAssuredJsonUtils.configureAwsContentTypes() の @BeforeAll での呼び出しが含まれている"
+  ]
+}

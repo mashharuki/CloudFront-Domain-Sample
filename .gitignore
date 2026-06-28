@@ -1,0 +1,24 @@
+.claude/agent-memory/**
+.DS_Store
+node_modules/
+coverage/
+dist/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+*.local
+.learnings
+
+# evidence/
+evidence/**/*.log
+evidence/**/*.txt
+evidence/**/*.png
+evidence/**/*.jpg
+evidence/**/*.jpeg
+evidence/**/*.webp
+evidence/**/*.gif
+evidence/**/*.mp4
+
+docs/elevenlabs
+.superpowers

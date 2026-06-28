@@ -1,0 +1,13 @@
+{
+  "eval_id": 1,
+  "eval_name": "translate-service",
+  "prompt": "FlociにAWS Translateサービスを追加したいです。まずどのAWSプロトコル（Query、JSON 1.1、REST JSONなど）を使うべきか教えてください。そして、サービスの基本的な骨格となるJavaコード（Handler、Service、Modelクラス）を作成してください。最低限 TranslateText アクションを実装してください。",
+  "assertions": [
+    "JSON 1.1 プロトコルを選択し、X-Amz-Target ヘッダーでルーティングすることを説明している",
+    "TranslateJsonHandler クラスまたは相当するハンドラークラスのコードが含まれている",
+    "@ApplicationScoped アノテーションのついた TranslateService クラスが含まれている",
+    "StorageFactory を使用してストレージを初期化している（InMemoryStorage の直接インスタンス化はしない）",
+    "AwsException を使ったエラーハンドリングが含まれている",
+    "ServiceDescriptor の登録コードまたはその説明が含まれている"
+  ]
+}

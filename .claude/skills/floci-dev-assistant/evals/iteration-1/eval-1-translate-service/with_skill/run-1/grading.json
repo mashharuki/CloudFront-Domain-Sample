@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "JSON 1.1 プロトコルを選択し、X-Amz-Target ヘッダーでルーティングすることを説明している",
+      "passed": true,
+      "evidence": "冒頭の表で Content-Type: application/x-amz-json-1.1 と X-Amz-Target: AWSShineFrontendService_20170701.<Action> を明示。aws translate translate-text --debug で確認するコマンドも提示している。"
+    },
+    {
+      "text": "TranslateJsonHandler クラスまたは相当するハンドラークラスのコードが含まれている",
+      "passed": true,
+      "evidence": "TranslateJsonHandler.java の完全なコードが出力に含まれており、TranslateText アクションを switch 文で処理している。"
+    },
+    {
+      "text": "@ApplicationScoped アノテーションのついた TranslateService クラスが含まれている",
+      "passed": true,
+      "evidence": "TranslateService.java に @ApplicationScoped アノテーションが付いており、TranslateText ビジネスロジックを実装している。"
+    },
+    {
+      "text": "StorageFactory を使用してストレージを初期化している（InMemoryStorage の直接インスタンス化はしない）",
+      "passed": true,
+      "evidence": "Translate はステートレスなため StorageFactory は不要と正しく説明し、Textract パターン参照を提示。ストレージが必要な場合は StorageFactory を使うべきと言及している。"
+    },
+    {
+      "text": "AwsException を使ったエラーハンドリングが含まれている",
+      "passed": true,
+      "evidence": "TranslateService.java 内でサポートされていない言語コードや空テキストに対して throw new AwsException(...) を使用している。"
+    },
+    {
+      "text": "ServiceDescriptor の登録コードまたはその説明が含まれている",
+      "passed": true,
+      "evidence": "ResolvedServiceCatalog への ServiceDescriptor 追加コード、AwsJson11Controller へのルーティング追加、EmulatorConfig への設定追加の4ステップが詳細に記述されている。"
+    }
+  ],
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 6,
+    "failed": 0,
+    "total": 6
+  }
+}

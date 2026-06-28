@@ -1,0 +1,52 @@
+{
+  "skill_name": "aws-well-architected",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "以下のLambda関数コードをレビューしてください。本番で使う予定です。\n\nimport boto3\nimport json\nimport os\n\nAWS_ACCESS_KEY = 'AKIAIOSFODNN7EXAMPLE'\nAWS_SECRET_KEY = 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'\nDB_PASSWORD = 'my-super-secret-password-123'\n\ndef handler(event, context):\n    dynamodb = boto3.resource('dynamodb', \n        aws_access_key_id=AWS_ACCESS_KEY,\n        aws_secret_access_key=AWS_SECRET_KEY\n    )\n    table = dynamodb.Table('users')\n    \n    # 全ユーザーを取得\n    result = table.scan()\n    \n    return {\n        'statusCode': 200,\n        'body': json.dumps(result['Items'])\n    }\n",
+      "expected_output": "ハードコードされた認証情報（CRITICALレベル）、Scan操作の非効率性、エラーハンドリングの欠如、ログ設定なしなどの問題を特定し、Well-Architectedの観点から具体的な修正コードを含む詳細なレビューを提供すること",
+      "files": [],
+      "expectations": [
+        "ハードコードされたIAMアクセスキーをCRITICALとして指摘している",
+        "ハードコードされたDBパスワードをCRITICALとして指摘している",
+        "DynamoDB Scan の使用を問題として指摘している",
+        "Secrets Managerを使った修正コードを提示している",
+        "IAM Roleを使うべきという推奨がある",
+        "エラーハンドリングの欠如を指摘している",
+        "Well-Architectedの柱（SECなど）に言及している"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "ECサイトのバックエンドAPIを設計したいです。要件は以下の通りです：\n- 月間アクティブユーザー: 10万人\n- ピーク時のリクエスト: 1,000 RPS\n- SLA: 99.9%\n- 商品検索、カート、注文処理が主な機能\n- AWS ap-northeast-1（東京）リージョンを使用\n- 予算: $500/月以内\n\nAWS Well-Architectedな構成を提案してください。",
+      "expected_output": "6つの柱（OE・SEC・REL・PERF・COST・SUS）全てを考慮したアーキテクチャ提案。マルチAZ、適切なサービス選択（Lambda/DynamoDB/ElastiCache/CloudFront等）、セキュリティ設計、概算コスト試算が含まれること",
+      "files": [],
+      "expectations": [
+        "マルチAZ構成（99.9% SLA対応）を推奨している",
+        "Lambda または Fargate をコンピュートとして提案している",
+        "DynamoDB または Aurora Serverless をDBとして提案している",
+        "Cognito または認証機能に言及している",
+        "CloudFront CDNに言及している",
+        "セキュリティ（WAF/VPC/IAM）に言及している",
+        "コスト見積もりまたはコスト最適化の言及がある",
+        "Well-Architectedフレームワークの柱に言及している"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "現在のインフラのコストが高くて困っています。現状を教えます：\n- EC2 t3.large × 3台（24時間365日稼働）: 開発・ステージング・本番\n- RDS MySQL db.t3.medium（シングルAZ、バックアップなし）\n- 全データをS3に無期限保存（テキストログ含む）\n- EBS gp2 500GB\n- CloudTrailオフ\n- アプリはFlask APIで、処理時間は平均200ms\n\n月$800かかっています。Well-Architectedの観点でコスト削減と改善を提案してください。",
+      "expected_output": "コスト削減策（Lambda移行、S3 Lifecycle、gp3移行等）と同時に、セキュリティ問題（CloudTrailオフ、バックアップなし、シングルAZ）をCRITICAL/HIGHとして指摘し、優先度付きの改善ロードマップを提供すること",
+      "files": [],
+      "expectations": [
+        "CloudTrailが無効なことをCRITICAL/HIGHとして指摘している",
+        "RDSのバックアップなしをCRITICALとして指摘している",
+        "RDSのシングルAZを信頼性の問題として指摘している",
+        "Lambda への移行（またはサーバーレス化）を提案している",
+        "S3 Lifecycle ポリシーによるコスト削減を提案している",
+        "EBS gp2 から gp3 への移行を提案している",
+        "開発/ステージング環境の夜間停止を提案している",
+        "具体的なコスト削減額の見積もりまたは割合を示している"
+      ]
+    }
+  ]
+}

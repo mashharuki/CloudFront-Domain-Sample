@@ -1,0 +1,127 @@
+{
+  "skill_name": "amazon-transcribe",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Python で Amazon Transcribe を使ってリアルタイムにマイクから音声を文字起こしするコードを書いてください。日本語対応で、確定テキストと途中テキストを区別して表示したいです。",
+      "expected_output": "amazon-transcribeライブラリを使ったPythonコード。TranscribeStreamingClient, TranscriptResultStreamHandler を使い、is_partial フラグで確定/途中を区別。sounddevice でマイク入力を非同期ストリームとして送信。ap-northeast-1リージョン、ja-JP言語コード。end_stream()の呼び出し含む。",
+      "files": [],
+      "assertions": [
+        {
+          "text": "TranscribeStreamingClient と TranscriptResultStreamHandler が使用されている",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "is_partial フラグで確定結果と途中結果を区別している",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "language_code='ja-JP' が指定されている",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "end_stream() が呼ばれている",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "非同期処理（asyncio）を正しく使用している",
+          "passed": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "TypeScript (Node.js) で音声ファイル (WAV形式) を Amazon Transcribe でストリーミング文字起こしするコードを書いてください。@aws-sdk/client-transcribe-streaming を使用し、WAVヘッダを除去してPCMデータのみを送信する必要があります。",
+      "expected_output": "@aws-sdk/client-transcribe-streaming を使ったTypeScriptコード。WAVヘッダ除去の処理（wavライブラリ使用 or 手動でサンプルレートを取得してPCMのみ送信）。AsyncIterableで音声チャンクを生成。StartStreamTranscriptionCommand を使用。IsPartial チェック含む。",
+      "files": [],
+      "assertions": [
+        {
+          "text": "@aws-sdk/client-transcribe-streaming が使用されている",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "WAVヘッダの除去またはPCMデータのみ送信についての言及がある",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "AsyncIterable<AudioStream> を使ってチャンクを送信している",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "StartStreamTranscriptionCommand が使用されている",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "サンプルレートを動的に取得またはハードコードしている",
+          "passed": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Amazon Transcribeのバッチ文字起こしジョブがFAILEDになってしまいました。原因の調べ方と、よくある原因・対処法を教えてください。また、ジョブ完了の検知にポーリングではなくEventBridgeを使う方法も教えてください。",
+      "expected_output": "FailureReason の取得コード、よくある失敗原因（S3 URI間違い・IAM権限不足・未サポートフォーマット）と対処法。EventBridgeルールの設定（aws.transcribeソース・Transcribe Job State Changeイベント）、Lambda関数でのイベント処理。",
+      "files": [],
+      "assertions": [
+        {
+          "text": "FailureReason の取得方法が示されている",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "よくある失敗原因（S3 URI・IAM・フォーマット等）が複数挙げられている",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "EventBridgeを使ったジョブ完了検知の方法が説明されている",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "IAM権限の設定例が含まれている",
+          "passed": null,
+          "evidence": null
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "コールセンターの通話録音（エージェントとお客様のデュアルチャンネル音声）を分析したいです。Amazon Transcribeで感情分析・スピーカー識別・通話要約ができますか？Pythonコードも教えてください。",
+      "expected_output": "Call Analytics の説明。start_call_analytics_job の使用。ChannelDefinitions でAGENT/CUSTOMERを指定。感情分析・中断検出・トーク比率などの機能説明。結果の解析方法。",
+      "files": [],
+      "assertions": [
+        {
+          "text": "Call Analytics モードについて説明されている",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "start_call_analytics_job が使用されている",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "ChannelDefinitions で AGENT/CUSTOMER を指定している",
+          "passed": null,
+          "evidence": null
+        },
+        {
+          "text": "感情分析の機能について説明されている",
+          "passed": null,
+          "evidence": null
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "エラーコード AWS.SimpleQueueService.NonExistentQueue に言及している",
+      "passed": true,
+      "evidence": "エラーコードに言及し、「for this wsdl version」というメッセージが SqsService.java の特定の箇所でのみ使われることを特定している。"
+    },
+    {
+      "text": "SqsQueryHandler または SqsService への具体的な参照が含まれている",
+      "passed": true,
+      "evidence": "SqsService.java の getQueueUrl() メソッドを ~line 295 と特定してコードを引用している。ただし with_skill 版が持つ RegionResolver, AwsQueryController への言及は薄い。"
+    },
+    {
+      "text": "エンドポイント URL の設定（--endpoint-url または SDK 設定）の確認を推奨している",
+      "passed": true,
+      "evidence": "ステップ 1 で Java SDK v1 と v2 のエンドポイント設定例が含まれている。"
+    },
+    {
+      "text": "Floci のログ確認またはデバッグ方法が含まれている",
+      "passed": false,
+      "evidence": "ログ確認の具体的な手順（./mvnw quarkus:dev など）が明示されていない。SDK 側の確認ステップが中心で Floci サーバー側のデバッグ方法が不足。"
+    },
+    {
+      "text": "キューが実際に作成されているかの確認方法が含まれている",
+      "passed": true,
+      "evidence": "インメモリストレージの再起動リセットについて言及し、ListQueues での確認を推奨している。"
+    }
+  ],
+  "summary": {
+    "pass_rate": 0.8,
+    "passed": 4,
+    "failed": 1,
+    "total": 5
+  }
+}

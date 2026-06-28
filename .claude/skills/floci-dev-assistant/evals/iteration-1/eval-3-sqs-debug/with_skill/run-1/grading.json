@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "エラーコード AWS.SimpleQueueService.NonExistentQueue に言及している",
+      "passed": true,
+      "evidence": "エラー概要セクションでエラーコードを明示し、SqsService.java のコードを直接引用してどこでスローされるかを示している。"
+    },
+    {
+      "text": "SqsQueryHandler または SqsService への具体的な参照が含まれている",
+      "passed": true,
+      "evidence": "SqsService.java の getQueueUrl() と sendMessage() メソッドの具体的なコードと行番号（~293, ~358-360）が引用されている。SqsQueryHandler, SqsJsonHandler も参照されている。"
+    },
+    {
+      "text": "エンドポイント URL の設定（--endpoint-url または SDK 設定）の確認を推奨している",
+      "passed": true,
+      "evidence": "Step 1 で SDK v2 / SDK v1 両方のエンドポイント設定コード例が含まれている。"
+    },
+    {
+      "text": "Floci のログ確認またはデバッグ方法が含まれている",
+      "passed": true,
+      "evidence": "./mvnw quarkus:dev でのログ確認が Step 1 で説明されている。"
+    },
+    {
+      "text": "キューが実際に作成されているかの確認方法が含まれている",
+      "passed": true,
+      "evidence": "Step 5 でストレージモード（memory vs persistent）の確認と、再起動でキューが消えることの説明が含まれている。ListQueues コマンドでの確認方法も提示している。"
+    }
+  ],
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 5,
+    "failed": 0,
+    "total": 5
+  }
+}

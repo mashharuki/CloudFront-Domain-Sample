@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "@QuarkusTest アノテーションが付いたテストクラスが生成されている",
+      "passed": true,
+      "evidence": "@QuarkusTest アノテーション付きの SsmScenarioIntegrationTest クラスが生成されている。"
+    },
+    {
+      "text": "X-Amz-Target ヘッダーを使った RestAssured の HTTP リクエストが含まれている",
+      "passed": true,
+      "evidence": ".header(\"X-Amz-Target\", \"AmazonSSM.PutParameter\") などが含まれている。"
+    },
+    {
+      "text": "Content-Type として application/x-amz-json-1.1 が使われている",
+      "passed": true,
+      "evidence": "SSM_CONTENT_TYPE = \"application/x-amz-json-1.1\" が定義されている。"
+    },
+    {
+      "text": "エラーケースのテストで .body(\"__type\", equalTo(...)) による検証がある",
+      "passed": true,
+      "evidence": ".body(\"__type\", equalTo(\"ParameterNotFound\")) が含まれている。既存の SsmIntegrationTest.java を参照したため正しいパターンを取得できた。"
+    },
+    {
+      "text": "DescribeParameters のレスポンス検証が含まれている",
+      "passed": true,
+      "evidence": "DescribeParameters の検証テストが含まれている。ただし with_skill 版と比較するとレスポンスの具体的なフィールド（DataType, LastModifiedDate）の検証が省略されている。"
+    },
+    {
+      "text": "RestAssuredJsonUtils.configureAwsContentTypes() の @BeforeAll での呼び出しが含まれている",
+      "passed": true,
+      "evidence": "@BeforeAll static void configureRestAssured() { RestAssuredJsonUtils.configureAwsContentTypes(); } が含まれている。"
+    }
+  ],
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 6,
+    "failed": 0,
+    "total": 6
+  }
+}

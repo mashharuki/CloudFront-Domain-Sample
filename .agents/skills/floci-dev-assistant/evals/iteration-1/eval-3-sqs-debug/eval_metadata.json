@@ -1,0 +1,12 @@
+{
+  "eval_id": 3,
+  "eval_name": "sqs-debug",
+  "prompt": "Floci で SQS キューを作ったあとに AWS Java SDK でメッセージを送ろうとしたら、次のエラーが出ました：\n\n```\ncom.amazonaws.services.sqs.model.AmazonSQSException: The specified queue does not exist for this wsdl version. (Service: AmazonSQS; Status Code: 400; Error Code: AWS.SimpleQueueService.NonExistentQueue)\n```\n\nこれを診断・修正するための手順を教えてください。また、Floci のコードのどこを確認すればいいか具体的なファイル・クラス名で教えてください。",
+  "assertions": [
+    "エラーコード AWS.SimpleQueueService.NonExistentQueue に言及している",
+    "SqsQueryHandler または SqsService への具体的な参照が含まれている",
+    "エンドポイント URL の設定（--endpoint-url または SDK 設定）の確認を推奨している",
+    "Floci のログ確認またはデバッグ方法が含まれている",
+    "キューが実際に作成されているかの確認方法が含まれている"
+  ]
+}
